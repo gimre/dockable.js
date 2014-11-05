@@ -116,7 +116,25 @@
     w.onload = function ( ) {
 
         var model = {
-            dragging: null
+            dragging: null,
+            dockHandles: ( function ( ) {
+                return [ 'top', 'right', 'bottom', 'left' ].map( function ( handle ) {
+                    var elem = d.createElement( 'div' );
+                    elem.className = [ 'dockhandle', handle ].join( ' ' );
+                    d.body.appendChild( elem );
+                    return elem;
+                } );
+            } )( )
+        };
+
+        var getOffset = function ( element, offsetKind ) {
+            var offset = 0;
+            while ( element.offsetParent ) {
+                offset += element[ offsetKind ]
+                element = element.offsetParent;
+            }
+
+            return offset;
         };
 
         var is = function ( element, className ) {
@@ -147,8 +165,8 @@
             if ( is( target, 'dockable' ) ) {
                 model.dragging = {
                     target:  target,
-                    offsetX: target.offsetLeft,
-                    offsetY: target.offsetTop
+                    offsetX: getOffset( target, 'offsetLeft' ),
+                    offsetY: getOffset( target, 'offsetTop' )
                 };
 
                 model.dragging.target.className = model.dragging.target.className.replace( ' dragging', '' );

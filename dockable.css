@@ -130,6 +130,7 @@ body {
 }
 
 .dockable {
+    cursor: pointer;
     opacity: 1;
     position: relative;
     transform:         translateZ( 0 ) scale(1);
@@ -152,10 +153,15 @@ body {
     -ms-transform:     translateZ( 0 ) scale( 0.3 );
     -o-transform:      translateZ( 0 ) scale( 0.3 );
     transform:         translateZ( 0 ) scale( 0.3 );
+    z-index: 1000;
+}
+
+.dockhandle {
+    z-index: 999;
 }
 
 .dropzone {
-    display: inline-block;
+    position: relative;
 }
 
 .transitioned {
