@@ -118,7 +118,17 @@
         var model = {
             dragging: null,
             dockHandles: ( function ( ) {
-                return [ 'top', 'right', 'bottom', 'left' ].map( function ( handle ) {
+                return [
+                    'top-left',
+                    'top',
+                    'top-right',
+                    'right',
+                    'bottom-right',
+                    'bottom',
+                    'bottom-left',
+                    'left',
+                    'center'
+                ].map( function ( handle ) {
                     var elem = d.createElement( 'div' );
                     elem.className = [ 'dockhandle', handle ].join( ' ' );
                     d.body.appendChild( elem );
