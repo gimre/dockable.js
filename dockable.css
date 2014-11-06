@@ -157,6 +157,50 @@ body {
 }
 
 .dockhandle {
+    background-color: rgba( 0, 0, 255, 0.5 );
+    border-radius: 50%;
+    bottom: 0;
+    height: 100px;
+    left: 0;
+    margin: auto;
+    opacity: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 100px;
+    z-index: -1;
+}
+
+.dockhandle.bottom {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    height: 50px;
+    top: auto;
+}
+
+.dockhandle.left {
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+    right: auto;
+    width: 50px;
+}
+
+.dockhandle.right {
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+    left: auto;
+    width: 50px;
+}
+
+.dockhandle.top {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    bottom: auto;
+    height: 50px;
+}
+
+.dockhandle.visible {
+    opacity: 1;
     z-index: 999;
 }
 

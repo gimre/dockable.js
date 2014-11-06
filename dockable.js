@@ -127,6 +127,12 @@
             } )( )
         };
 
+        var addElementClass = function ( element, className ) {
+            if ( !is( element, className ) ) {
+                element.className += ' ' + className;
+            }
+        };
+
         var getOffset = function ( element, offsetKind ) {
             var offset = 0;
             while ( element.offsetParent ) {
@@ -138,12 +144,24 @@
         };
 
         var is = function ( element, className ) {
-            return new RegExp( className ).test( element.className );
+            return element.className && new RegExp( className ).test( element.className );
         };
 
         var moveElement = function ( element, x, y ) {
             element.style.left = x + 'px';
             element.style.top  = y + 'px';
+        };
+
+        var moveHandlesToElement = function ( element, hide ) {
+            for ( var i = 0; i < model.dockHandles.length; i ++ ) {
+                var handle = model.dockHandles[ i ];
+                if ( hide ) {
+                    removeElementClass( handle, 'visible' );
+                } else {
+                    addElementClass( handle, 'visible' );
+                    element.appendChild( handle );
+                }
+            }
         };
 
         var moveToMouseEvent = function ( element, mouseEvent ) {
@@ -152,12 +170,16 @@
             return moveElement( element, x, y );
         };
 
-        var noop = function ( ) {
+        var preventDefault = function ( ) {
             return false;
         };
 
-        d.body.ondragstart = noop;
-        d.body.ondrop      = noop;
+        var removeElementClass = function ( element, className ) {
+            element.className = element.className.replace( ' ' + className, '' );
+        };
+
+        d.body.ondragstart = preventDefault;
+        d.body.ondrop      = preventDefault;
 
         w.addEventListener( 'mousedown', function ( event ) {
             var target = event.target;
@@ -166,11 +188,12 @@
                 model.dragging = {
                     target:  target,
                     offsetX: getOffset( target, 'offsetLeft' ),
-                    offsetY: getOffset( target, 'offsetTop' )
+                    offsetY: getOffset( target, 'offsetTop' ),
+                    over: null
                 };
 
-                model.dragging.target.className = model.dragging.target.className.replace( ' dragging', '' );
-                model.dragging.target.className += ' dragging';
+                addElementClass( model.dragging.target, 'transitioned' );
+                addElementClass( model.dragging.target, 'dragging' );
                 moveToMouseEvent( model.dragging.target, event );
             };
 
@@ -178,7 +201,13 @@
 
         w.addEventListener( 'mousemove', function ( event ) {
             if ( model.dragging ) {
+                var target = event.target;
                 moveToMouseEvent( model.dragging.target, event );
+
+                if ( target !== model.dragging.over && !is( target, 'dockhandle' ) ) {
+                    moveHandlesToElement( target, !is( target, 'dropzone' ) );
+                    model.dragging.over = target;
+                }
             }
         } );
 
@@ -186,11 +215,13 @@
             var target = event.target;
 
             if ( model.dragging ) {
-                if ( is( target, 'dropzone' ) ) {
-                    target.appendChild( model.dragging.target );
+                if ( is( target, 'dockhandle' ) ) {
+                    target.parentNode.appendChild( model.dragging.target );
                 }
+                moveHandlesToElement( null, true );
                 moveElement( model.dragging.target, 0, 0 );
-                model.dragging.target.className = model.dragging.target.className.replace( ' dragging', '' );
+                removeElementClass( model.dragging.target, 'transitioned' );
+                removeElementClass( model.dragging.target, 'dragging' );
                 model.dragging = null;
             };
         } );
